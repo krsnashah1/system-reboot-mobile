@@ -15,10 +15,10 @@ export default function HintTooltip() {
           initial={{ opacity: 0, y: 40, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
-          className="fixed bottom-6 right-6 z-40 max-w-md w-full font-mono"
+          className="fixed left-3 right-3 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] md:left-auto md:right-6 md:bottom-6 md:max-w-md md:w-full z-40 font-mono"
         >
           <div
-            className={`p-4 rounded-xl border-2 backdrop-blur-md shadow-2xl ${
+            className={`p-3 md:p-4 rounded-xl border-2 backdrop-blur-md shadow-2xl max-h-[45dvh] overflow-y-auto ${
               activeHint.type === 'ERROR'
                 ? 'bg-rose-950/90 border-rose-500/70 text-rose-100 shadow-[0_0_30px_rgba(244,63,94,0.3)]'
                 : 'bg-amber-950/90 border-amber-400/70 text-amber-100 shadow-[0_0_30px_rgba(251,191,36,0.25)]'
@@ -41,7 +41,7 @@ export default function HintTooltip() {
               </div>
               <button
                 onClick={clearHint}
-                className="text-xs opacity-70 hover:opacity-100 font-bold cursor-pointer"
+                className="text-xs opacity-70 hover:opacity-100 font-bold cursor-pointer px-2 py-1 -m-1 shrink-0"
               >
                 [X]
               </button>

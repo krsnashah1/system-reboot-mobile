@@ -164,9 +164,9 @@ export default function LeaderboardView() {
   ]);
 
   return (
-    <section className="max-w-5xl mx-auto w-full px-4 py-8 font-mono flex flex-col gap-6">
-      <div className="bg-slate-900/95 border-2 border-emerald-400 rounded-2xl p-6 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+    <section className="max-w-5xl mx-auto w-full px-3 sm:px-4 py-4 md:py-8 font-mono flex flex-col gap-4 md:gap-6">
+      <div className="bg-slate-900/95 border-2 border-emerald-400 rounded-2xl p-4 sm:p-6 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
           <div>
             <span className="px-2.5 py-0.5 text-[10px] font-extrabold rounded bg-emerald-400 text-slate-950 uppercase">
               SYSTEM REBOOT COMPLETE // COA SIMULATOR
@@ -205,11 +205,11 @@ export default function LeaderboardView() {
         </div>
 
         {!playerName && (
-          <div className="mt-4 p-3 rounded-lg bg-amber-500/15 border border-amber-400/50 flex items-center justify-between text-xs text-amber-200">
+          <div className="mt-4 p-3 rounded-lg bg-amber-500/15 border border-amber-400/50 flex flex-wrap items-center justify-between gap-2 text-xs text-amber-200">
             <span>You haven&apos;t set your Technician Callsign yet!</span>
             <button
               onClick={() => openTutorial(0)}
-              className="px-3 py-1 rounded bg-amber-400 text-slate-950 font-extrabold cursor-pointer"
+              className="px-3 py-2 sm:py-1 rounded bg-amber-400 text-slate-950 font-extrabold cursor-pointer"
             >
               SET USERNAME
             </button>
@@ -219,7 +219,7 @@ export default function LeaderboardView() {
 
       {/* Live Rankings Table */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden">
-        <div className="px-6 py-3.5 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+        <div className="px-3 sm:px-6 py-3 sm:py-3.5 bg-slate-950 border-b border-slate-800 flex items-center justify-between gap-2">
           <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
             // TOP SYSTEM ARCHITECTS (PERSISTENT AUTO-SYNC)
           </span>
@@ -237,9 +237,9 @@ export default function LeaderboardView() {
                 key={`${entry.name}-${entry.regNo}`}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="px-6 py-3.5 flex items-center justify-between text-xs"
+                className="px-3 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-2 text-xs"
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                   <span
                     className={`w-7 h-7 rounded-full flex items-center justify-center font-extrabold text-xs ${
                       idx === 0
@@ -253,13 +253,14 @@ export default function LeaderboardView() {
                   >
                     {idx + 1}
                   </span>
-                  <div>
-                    <div className="font-extrabold text-sm text-white">{entry.name}</div>
-                    <div className="text-[10px] text-slate-400">{entry.regNo}</div>
+                  <div className="min-w-0">
+                    <div className="font-extrabold text-sm text-white truncate">{entry.name}</div>
+                    <div className="text-[10px] text-slate-400 truncate">{entry.regNo}</div>
+                    <div className="sm:hidden text-[10px] text-emerald-400">{entry.hitRatio}% hit</div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-3 sm:gap-6 shrink-0">
                   <div className="hidden sm:block text-right">
                     <div className="text-[10px] text-slate-500">HIT RATIO</div>
                     <div className="font-bold text-emerald-400">{entry.hitRatio}%</div>
@@ -270,7 +271,7 @@ export default function LeaderboardView() {
                       {formatTime(entry.timeSeconds ?? 0)}
                     </div>
                   </div>
-                  <div className="text-right min-w-[85px]">
+                  <div className="text-right min-w-[64px] sm:min-w-[85px]">
                     <div className="text-[10px] text-slate-500">FINAL SCORE</div>
                     <div className="text-base font-extrabold text-amber-400">
                       {entry.score}

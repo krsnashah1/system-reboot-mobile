@@ -21,3 +21,26 @@ body {
   60% { transform: translate(-2px, 2px); filter: hue-rotate(-90deg); }
 }
 .animate-glitch { animation: glitch .35s linear; }
+
+
+/* ===== Mobile / touch support ===== */
+:root { --hud-h: 5.5rem; }                 /* 2-row HUD on phones */
+@media (min-width: 768px) { :root { --hud-h: 4rem; } }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+button, a, [role="button"] { touch-action: manipulation; }
+
+/* iOS Safari zooms the page when a focused input is < 16px */
+@media (max-width: 767px) {
+  input, select, textarea { font-size: 16px !important; }
+}
+
+/* Highlight of the cache line under a finger during touch-drag */
+[data-touch-hover="true"] {
+  outline: 2px solid #34d399;
+  outline-offset: 2px;
+  box-shadow: 0 0 28px rgba(52, 211, 153, 0.5);
+}

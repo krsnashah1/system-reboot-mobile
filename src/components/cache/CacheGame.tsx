@@ -10,6 +10,7 @@ import {
   validateCachePlacement,
 } from '@/lib/mapping';
 import { sound } from '@/lib/sound';
+import TouchDragChip from './TouchDragChip';
 import DraggableBlock from './DraggableBlock';
 import CacheLine from './CacheLine';
 import LiveTelemetryDashboard from '../ui/LiveTelemetryDashboard';
@@ -445,14 +446,14 @@ export default function CacheGame() {
   };
 
   return (
-    <section className="relative max-w-6xl mx-auto w-full px-4 py-6 font-mono flex flex-col gap-6">
+    <section className="relative max-w-6xl mx-auto w-full px-3 sm:px-4 py-4 md:py-6 font-mono flex flex-col gap-4 md:gap-6">
       {/* Phase 1 Lock Overlay once all 3 stages are completed */}
       {isCacheCompleted && (
         <div className="fixed inset-0 z-30 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="max-w-xl w-full p-8 bg-slate-900 border-2 border-emerald-400 rounded-2xl text-center shadow-[0_0_60px_rgba(16,185,129,0.35)]"
+            className="max-w-xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto p-5 sm:p-8 bg-slate-900 border-2 border-emerald-400 rounded-2xl text-center shadow-[0_0_60px_rgba(16,185,129,0.35)]"
           >
             <div className="inline-block px-3 py-1 rounded bg-emerald-500/20 border border-emerald-400 text-emerald-300 text-xs font-extrabold uppercase mb-3">
               🔒 MODULE 5 LOCKED &amp; COMPLETED
@@ -475,12 +476,12 @@ export default function CacheGame() {
       )}
 
       <div
-        className={`flex flex-col gap-6 transition-all ${
+        className={`flex flex-col gap-4 md:gap-6 transition-all ${
           isCacheCompleted ? 'opacity-25 pointer-events-none grayscale' : ''
         }`}
       >
         {/* Top Stage Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/80 border border-emerald-500/30 p-4 rounded-xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4 bg-slate-900/80 border border-emerald-500/30 p-3 sm:p-4 rounded-xl">
           <div>
             <h1 className="text-base md:text-lg font-extrabold text-white tracking-wide">
               {stage === 1 && 'LEVEL 01 // DIRECT MAPPING BLOCK ROUTER'}
@@ -520,9 +521,29 @@ export default function CacheGame() {
            =================================================================== */}
         {stage === 1 && (
           <>
+            {/* Phones: sticky active-block bar so the block stays visible (and draggable) while scrolling to the lines */}
+            <div className="lg:hidden sticky top-[calc(var(--hud-h)+env(safe-area-inset-top))] z-20 -mx-3 sm:-mx-4 px-3 sm:px-4 py-2 bg-slate-950/95 backdrop-blur border-b border-emerald-500/30 flex items-center gap-3">
+              <TouchDragChip
+                onDropLine={handleStage1Drop}
+                ghostLabel={`B${currentBlock}`}
+                className="shrink-0 min-w-16 px-3 py-2 rounded-lg bg-emerald-500 text-slate-950 font-extrabold text-base border-2 border-emerald-300 shadow-[0_0_18px_rgba(16,185,129,0.5)]"
+              >
+                ⠿ B{currentBlock}
+              </TouchDragChip>
+              <div className="min-w-0 text-[11px] leading-tight">
+                {existingHitLine !== null ? (
+                  <div className="text-amber-300 font-bold">⚡ Already cached: tap Line {existingHitLine} for a HIT</div>
+                ) : (
+                  <>
+                    <div className="text-emerald-300 font-bold truncate">Rule: Line = B{currentBlock} mod 4</div>
+                    <div className="text-slate-400">Drag ⠿ onto a line, or just tap a line</div>
+                  </>
+                )}
+              </div>
+            </div>
             <LiveTelemetryDashboard />
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <div className="lg:col-span-5 bg-slate-900/70 border border-slate-800 rounded-xl p-5">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
+              <div className="lg:col-span-5 bg-slate-900/70 border border-slate-800 rounded-xl p-3 sm:p-5">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
                     // MAIN MEMORY STREAM
@@ -542,6 +563,7 @@ export default function CacheGame() {
                   isSelected={true}
                   alreadyInCacheLine={existingHitLine}
                   onSelect={() => {}}
+                  onTouchDrop={handleStage1Drop}
                 />
 
                 <div className="mt-5 pt-4 border-t border-slate-800/80">
@@ -575,7 +597,7 @@ export default function CacheGame() {
                 </div>
               </div>
 
-              <div className="lg:col-span-7 bg-slate-900/70 border border-slate-800 rounded-xl p-5">
+              <div className="lg:col-span-7 bg-slate-900/70 border border-slate-800 rounded-xl p-3 sm:p-5">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
                     // L1 CACHE MEMORY (4 LINES — DIRECT MAPPED)
@@ -607,9 +629,9 @@ export default function CacheGame() {
             STAGE 2: MEMORY HIERARCHY PYRAMID ARCHITECT
            =================================================================== */}
         {stage === 2 && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
             {/* LEFT: Scrambled Hardware Modules */}
-            <div className="lg:col-span-5 bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-4">
+            <div className="lg:col-span-5 bg-slate-900/80 border border-slate-800 rounded-xl p-3 sm:p-5 space-y-4">
               <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 text-xs text-emerald-200 leading-relaxed">
                 <strong>📋 HOW TO PLAY LEVEL 2:</strong> Click (or drag) each memory technology below and place it into
                 the correct tier of the <strong>Memory Hierarchy Pyramid</strong> on the right:
@@ -663,7 +685,7 @@ export default function CacheGame() {
             </div>
 
             {/* RIGHT: Visual Pyramid Slots (Level 0 Narrowest -> Level 4 Widest) */}
-            <div className="lg:col-span-7 bg-slate-900/80 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+            <div className="lg:col-span-7 bg-slate-900/80 border border-slate-800 rounded-xl p-3 sm:p-5 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
@@ -678,10 +700,10 @@ export default function CacheGame() {
 
                 <div className="flex flex-col items-center space-y-3 py-2">
                   {[
-                    { lvl: 0, widthClass: 'w-7/12', hint: 'L0: Fastest / Inside CPU' },
-                    { lvl: 1, widthClass: 'w-8/12', hint: 'L1: Fast On-Chip SRAM' },
-                    { lvl: 2, widthClass: 'w-9/12', hint: 'L2: Primary DRAM' },
-                    { lvl: 3, widthClass: 'w-10/12', hint: 'L3: Non-Volatile Disk Storage' },
+                    { lvl: 0, widthClass: 'w-[86%] sm:w-7/12', hint: 'L0: Fastest / Inside CPU' },
+                    { lvl: 1, widthClass: 'w-[90%] sm:w-8/12', hint: 'L1: Fast On-Chip SRAM' },
+                    { lvl: 2, widthClass: 'w-[94%] sm:w-9/12', hint: 'L2: Primary DRAM' },
+                    { lvl: 3, widthClass: 'w-[97%] sm:w-10/12', hint: 'L3: Non-Volatile Disk Storage' },
                     { lvl: 4, widthClass: 'w-full', hint: 'L4: Offline Archival Backup' },
                   ].map(({ lvl, widthClass, hint }) => {
                     const occupant = pyramidSlots[lvl];
@@ -700,14 +722,14 @@ export default function CacheGame() {
                             : 'bg-slate-950/80 border-slate-700 border-dashed hover:border-emerald-400'
                         }`}
                       >
-                        <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1">
+                        <div className="flex flex-wrap items-center justify-between gap-x-2 text-[10px] text-slate-400 mb-1">
                           <span className="font-extrabold text-emerald-400">
                             LEVEL {lvl}
                           </span>
                           <span>{hint}</span>
                         </div>
                         {occupant ? (
-                          <div className="flex items-center justify-between text-xs mt-1">
+                          <div className="flex flex-wrap items-center justify-between gap-x-2 text-xs mt-1">
                             <span className="font-extrabold text-white">
                               {occupant.name}
                             </span>
@@ -740,7 +762,7 @@ export default function CacheGame() {
             STAGE 3: PHYSICAL ADDRESS BIT-SPLITTER & 3Cs MISS DECODER
            =================================================================== */}
         {stage === 3 && (
-          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-6 space-y-6">
+          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 sm:p-6 space-y-5 sm:space-y-6">
             {/* Hardware Spec Card */}
             <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/40">
               <div className="text-xs font-extrabold text-emerald-300 uppercase mb-2">
@@ -781,7 +803,7 @@ export default function CacheGame() {
             </div>
 
             {/* Interactive Visual Address Bit-Splitter */}
-            <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
+            <div className="bg-slate-950 p-3 sm:p-5 rounded-xl border border-slate-800 space-y-4">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-emerald-400 uppercase">
                   // {bitChallenge.totalPaBits}-BIT PHYSICAL ADDRESS FORMAT
@@ -812,14 +834,14 @@ export default function CacheGame() {
                     <button
                       type="button"
                       onClick={() => setUserTagBits(Math.max(1, userTagBits - 1))}
-                      className="px-3 py-1 rounded bg-slate-900 hover:bg-emerald-500 hover:text-slate-950 font-extrabold cursor-pointer"
+                      className="px-5 py-2.5 sm:px-3 sm:py-1 rounded bg-slate-900 hover:bg-emerald-500 hover:text-slate-950 font-extrabold cursor-pointer"
                     >
                       -
                     </button>
                     <button
                       type="button"
                       onClick={() => setUserTagBits(Math.min(16, userTagBits + 1))}
-                      className="px-3 py-1 rounded bg-slate-900 hover:bg-emerald-500 hover:text-slate-950 font-extrabold cursor-pointer"
+                      className="px-5 py-2.5 sm:px-3 sm:py-1 rounded bg-slate-900 hover:bg-emerald-500 hover:text-slate-950 font-extrabold cursor-pointer"
                     >
                       +
                     </button>
@@ -841,14 +863,14 @@ export default function CacheGame() {
                     <button
                       type="button"
                       onClick={() => setUserSetBits(Math.max(1, userSetBits - 1))}
-                      className="px-3 py-1 rounded bg-slate-900 hover:bg-amber-400 hover:text-slate-950 font-extrabold cursor-pointer"
+                      className="px-5 py-2.5 sm:px-3 sm:py-1 rounded bg-slate-900 hover:bg-amber-400 hover:text-slate-950 font-extrabold cursor-pointer"
                     >
                       -
                     </button>
                     <button
                       type="button"
                       onClick={() => setUserSetBits(Math.min(16, userSetBits + 1))}
-                      className="px-3 py-1 rounded bg-slate-900 hover:bg-amber-400 hover:text-slate-950 font-extrabold cursor-pointer"
+                      className="px-5 py-2.5 sm:px-3 sm:py-1 rounded bg-slate-900 hover:bg-amber-400 hover:text-slate-950 font-extrabold cursor-pointer"
                     >
                       +
                     </button>
@@ -872,7 +894,7 @@ export default function CacheGame() {
                       onClick={() =>
                         setUserOffsetBits(Math.max(1, userOffsetBits - 1))
                       }
-                      className="px-3 py-1 rounded bg-slate-900 hover:bg-cyan-400 hover:text-slate-950 font-extrabold cursor-pointer"
+                      className="px-5 py-2.5 sm:px-3 sm:py-1 rounded bg-slate-900 hover:bg-cyan-400 hover:text-slate-950 font-extrabold cursor-pointer"
                     >
                       -
                     </button>
@@ -881,7 +903,7 @@ export default function CacheGame() {
                       onClick={() =>
                         setUserOffsetBits(Math.min(16, userOffsetBits + 1))
                       }
-                      className="px-3 py-1 rounded bg-slate-900 hover:bg-cyan-400 hover:text-slate-950 font-extrabold cursor-pointer"
+                      className="px-5 py-2.5 sm:px-3 sm:py-1 rounded bg-slate-900 hover:bg-cyan-400 hover:text-slate-950 font-extrabold cursor-pointer"
                     >
                       +
                     </button>
@@ -894,7 +916,7 @@ export default function CacheGame() {
             </div>
 
             {/* Part B: 3Cs Cache Miss Diagnostic */}
-            <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3">
+            <div className="bg-slate-950 p-3 sm:p-5 rounded-xl border border-slate-800 space-y-3">
               <div className="text-xs font-extrabold text-amber-300 uppercase">
                 📋 PART B: DIAGNOSE THE CACHE MISS TYPE (THE 3Cs + COHERENCE)
               </div>

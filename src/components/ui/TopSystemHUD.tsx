@@ -81,97 +81,142 @@ export default function TopSystemHUD() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-40 h-16 bg-slate-950/90 backdrop-blur-md border-b border-emerald-500/30 px-3 md:px-6 flex items-center justify-between font-mono select-none">
-        <div className="flex items-center gap-2.5">
-          <div className="h-3 w-3 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_#34d399]" />
-          <div>
-            <div className="text-[10px] tracking-widest text-emerald-500/80 uppercase flex items-center gap-2">
-              <span>SYS.REBOOT // {phase}</span>
-              <span className="hidden xl:inline text-slate-500">
-                • Made by Krsna Shah (25BCA7363)
-              </span>
-            </div>
-            <div className="text-xs md:text-sm font-bold text-emerald-300 tracking-wider">
-              {phase === 'CACHE'
-                ? `MODULE 5 : STAGE 0${level} OF 03`
-                : phase === 'PIPELINE'
-                ? 'MODULE 6 : PIPELINE OVERDRIVE'
-                : 'FINAL : LIVE LEADERBOARD'}
+      <header className="fixed top-0 left-0 right-0 z-40 h-[calc(var(--hud-h)+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] bg-slate-950/90 backdrop-blur-md border-b border-emerald-500/30 font-mono select-none">
+        {/* ROW 1: title + action buttons (+ centred score box on desktop) */}
+        <div className="relative h-12 md:h-16 px-3 md:px-6 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 md:gap-2.5 min-w-0">
+            <div className="h-3 w-3 shrink-0 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_#34d399]" />
+            <div className="min-w-0">
+              <div className="text-[9px] md:text-[10px] tracking-widest text-emerald-500/80 uppercase flex items-center gap-2 truncate">
+                <span>SYS.REBOOT // {phase}</span>
+                <span className="hidden xl:inline text-slate-500">
+                  • Made by Krsna Shah (25BCA7363)
+                </span>
+              </div>
+              <div className="text-[11px] md:text-sm font-bold text-emerald-300 tracking-wider truncate">
+                <span className="md:hidden">
+                  {phase === 'CACHE'
+                    ? `M5 · STAGE 0${level}/03`
+                    : phase === 'PIPELINE'
+                    ? 'M6 · PIPELINE'
+                    : 'LEADERBOARD'}
+                </span>
+                <span className="hidden md:inline">
+                  {phase === 'CACHE'
+                    ? `MODULE 5 : STAGE 0${level} OF 03`
+                    : phase === 'PIPELINE'
+                    ? 'MODULE 6 : PIPELINE OVERDRIVE'
+                    : 'FINAL : LIVE LEADERBOARD'}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* CENTER: Persistent Score Counter + Stopwatch */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-1 flex flex-col items-center">
-          <div className="bg-slate-900/95 border-2 border-emerald-500/60 px-4 md:px-6 py-1 rounded-b-xl shadow-[0_0_25px_rgba(16,185,129,0.25)] flex items-center gap-4 md:gap-6">
-            <div className="text-center">
-              <span className="block text-[9px] uppercase tracking-[0.2em] text-emerald-500/80">
-                System Score
-              </span>
-              <AnimatePresence mode="popLayout">
-                <motion.span
-                  key={score}
-                  initial={{ scale: 1.3, color: '#6ee7b7' }}
-                  animate={{ scale: 1, color: '#34d399' }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 18 }}
-                  className="block text-lg md:text-2xl font-extrabold tracking-widest text-emerald-400"
+          {/* CENTER (desktop): Persistent Score Counter + Stopwatch */}
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 top-1 flex-col items-center">
+            <div className="bg-slate-900/95 border-2 border-emerald-500/60 px-6 py-1 rounded-b-xl shadow-[0_0_25px_rgba(16,185,129,0.25)] flex items-center gap-6">
+              <div className="text-center">
+                <span className="block text-[9px] uppercase tracking-[0.2em] text-emerald-500/80">
+                  System Score
+                </span>
+                <AnimatePresence mode="popLayout">
+                  <motion.span
+                    key={score}
+                    initial={{ scale: 1.3, color: '#6ee7b7' }}
+                    animate={{ scale: 1, color: '#34d399' }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 18 }}
+                    className="block text-2xl font-extrabold tracking-widest text-emerald-400"
+                  >
+                    {score.toString().padStart(6, '0')}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+
+              <div className="h-7 w-[1px] bg-slate-800" />
+
+              <div className="text-center">
+                <span className="block text-[9px] uppercase tracking-[0.2em] text-cyan-400/80">
+                  Elapsed Time
+                </span>
+                <span className="block text-2xl font-extrabold tracking-widest text-cyan-300">
+                  {formatTime(elapsedSeconds)}
+                </span>
+              </div>
+
+              {streak > 1 && (
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="bg-amber-500/20 border border-amber-400/60 text-amber-300 px-2 py-0.5 rounded text-xs font-bold"
                 >
-                  {score.toString().padStart(6, '0')}
-                </motion.span>
-              </AnimatePresence>
+                  {streak}x
+                </motion.div>
+              )}
             </div>
+          </div>
 
-            <div className="h-7 w-[1px] bg-slate-800" />
+          {/* RIGHT: Leaderboard Tab, Hint Button & Manual Button */}
+          <div className="flex items-center gap-1.5 md:gap-2.5 shrink-0">
+            <button
+              onClick={openLeaderboardModal}
+              aria-label="Live leaderboard"
+              className="min-h-10 min-w-10 md:min-h-0 md:min-w-0 px-2.5 md:px-3 py-1.5 rounded bg-cyan-500/10 hover:bg-cyan-500/25 border border-cyan-400/50 text-cyan-300 text-xs font-bold tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              title="View Live Classroom Leaderboard"
+            >
+              <span>🏆</span>
+              <span className="hidden md:inline">RANKS</span>
+            </button>
 
-            <div className="text-center">
-              <span className="block text-[9px] uppercase tracking-[0.2em] text-cyan-400/80">
-                Elapsed Time
-              </span>
-              <span className="block text-lg md:text-2xl font-extrabold tracking-widest text-cyan-300">
-                {formatTime(elapsedSeconds)}
-              </span>
-            </div>
+            <button
+              onClick={requestTacticalHint}
+              aria-label="Get a hint"
+              className="min-h-10 min-w-10 md:min-h-0 md:min-w-0 px-2.5 md:px-3 py-1.5 rounded bg-amber-500/10 hover:bg-amber-500/25 border border-amber-400/50 text-amber-300 text-xs font-bold tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              title="Get a hint for the current puzzle"
+            >
+              <span className="text-amber-400 font-extrabold">[?]</span>
+              <span className="hidden sm:inline">HINT</span>
+            </button>
 
-            {streak > 1 && (
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="hidden sm:block bg-amber-500/20 border border-amber-400/60 text-amber-300 px-2 py-0.5 rounded text-xs font-bold"
-              >
-                {streak}x
-              </motion.div>
-            )}
+            <button
+              onClick={handleOpenManual}
+              aria-label="Open manual"
+              className="min-h-10 min-w-10 md:min-h-0 md:min-w-0 px-2.5 md:px-3 py-1.5 rounded bg-emerald-500/10 hover:bg-emerald-500/25 border border-emerald-500/50 text-emerald-300 text-xs font-bold tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              title="Open COA Field Manual & Walkthrough"
+            >
+              <span className="text-emerald-400 font-extrabold">[i]</span>
+              <span className="hidden sm:inline">MANUAL</span>
+            </button>
           </div>
         </div>
 
-        {/* RIGHT: Leaderboard Tab, Hint Button & Manual Button */}
-        <div className="flex items-center gap-1.5 md:gap-2.5">
-          <button
-            onClick={openLeaderboardModal}
-            className="px-2.5 md:px-3 py-1.5 rounded bg-cyan-500/10 hover:bg-cyan-500/25 border border-cyan-400/50 text-cyan-300 text-xs font-bold tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
-            title="View Live Classroom Leaderboard"
-          >
-            <span>🏆</span>
-            <span className="hidden md:inline">RANKS</span>
-          </button>
-
-          <button
-            onClick={requestTacticalHint}
-            className="px-2.5 md:px-3 py-1.5 rounded bg-amber-500/10 hover:bg-amber-500/25 border border-amber-400/50 text-amber-300 text-xs font-bold tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
-            title="Get a hint for the current puzzle"
-          >
-            <span className="text-amber-400 font-extrabold">[?]</span>
-            <span className="hidden sm:inline">HINT</span>
-          </button>
-
-          <button
-            onClick={handleOpenManual}
-            className="px-2.5 md:px-3 py-1.5 rounded bg-emerald-500/10 hover:bg-emerald-500/25 border border-emerald-500/50 text-emerald-300 text-xs font-bold tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
-            title="Open COA Field Manual & Walkthrough"
-          >
-            <span className="text-emerald-400 font-extrabold">[i]</span>
-            <span className="hidden sm:inline">MANUAL</span>
-          </button>
+        {/* ROW 2 (phones only): score + timer strip */}
+        <div className="md:hidden h-9 px-3 flex items-center justify-center gap-4 border-t border-slate-800/70 bg-slate-900/60">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[9px] uppercase tracking-[0.15em] text-emerald-500/80">Score</span>
+            <AnimatePresence mode="popLayout">
+              <motion.span
+                key={score}
+                initial={{ scale: 1.3, color: '#6ee7b7' }}
+                animate={{ scale: 1, color: '#34d399' }}
+                transition={{ type: 'spring', stiffness: 400, damping: 18 }}
+                className="text-lg font-extrabold tracking-widest text-emerald-400"
+              >
+                {score.toString().padStart(6, '0')}
+              </motion.span>
+            </AnimatePresence>
+          </div>
+          <div className="h-5 w-[1px] bg-slate-700" />
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[9px] uppercase tracking-[0.15em] text-cyan-400/80">Time</span>
+            <span className="text-lg font-extrabold tracking-widest text-cyan-300">
+              {formatTime(elapsedSeconds)}
+            </span>
+          </div>
+          {streak > 1 && (
+            <div className="bg-amber-500/20 border border-amber-400/60 text-amber-300 px-1.5 py-0.5 rounded text-[11px] font-bold">
+              {streak}x
+            </div>
+          )}
         </div>
       </header>
 
@@ -188,24 +233,26 @@ export default function TopSystemHUD() {
               initial={{ scale: 0.92, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.92, y: 15 }}
-              className="w-full max-w-2xl bg-slate-900 border-2 border-cyan-400/60 rounded-2xl shadow-[0_0_50px_rgba(34,211,238,0.25)] overflow-hidden"
+              className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] flex flex-col bg-slate-900 border-2 border-cyan-400/60 rounded-2xl shadow-[0_0_50px_rgba(34,211,238,0.25)] overflow-hidden"
             >
-              <div className="bg-slate-950 px-5 py-3.5 border-b border-cyan-500/30 flex items-center justify-between">
+              <div className="bg-slate-950 px-3 sm:px-5 py-3 sm:py-3.5 border-b border-cyan-500/30 flex items-center justify-between gap-2 shrink-0">
                 <div className="flex items-center gap-2">
                   <span>🏆</span>
                   <span className="text-xs font-extrabold tracking-widest text-cyan-300 uppercase">
-                    LIVE CLASSROOM STANDINGS (PERSISTENT SYNC)
+                    <span className="hidden sm:inline">LIVE CLASSROOM STANDINGS (PERSISTENT SYNC)</span>
+                    <span className="sm:hidden">LIVE STANDINGS</span>
                   </span>
                 </div>
                 <button
                   onClick={closeLeaderboardModal}
-                  className="text-xs text-slate-400 hover:text-rose-400 font-bold px-2.5 py-1 rounded border border-slate-800 hover:border-rose-500/40 cursor-pointer"
+                  className="text-xs text-slate-400 hover:text-rose-400 font-bold px-3 py-2 sm:px-2.5 sm:py-1 rounded border border-slate-800 hover:border-rose-500/40 cursor-pointer shrink-0"
                 >
-                  [CLOSE &amp; RESUME]
+                  <span className="hidden sm:inline">[CLOSE &amp; RESUME]</span>
+                  <span className="sm:hidden">[CLOSE]</span>
                 </button>
               </div>
 
-              <div className="bg-cyan-950/25 px-5 py-3 border-b border-slate-800 flex items-center justify-between text-xs">
+              <div className="bg-cyan-950/25 px-3 sm:px-5 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs shrink-0">
                 <div>
                   <span className="text-slate-400">Your Active Run: </span>
                   <strong className="text-white">{playerName || 'TECHNICIAN'}</strong>
@@ -220,7 +267,7 @@ export default function TopSystemHUD() {
                 </div>
               </div>
 
-              <div className="max-h-[340px] overflow-y-auto divide-y divide-slate-800/70">
+              <div className="min-h-0 flex-1 overflow-y-auto md:max-h-[340px] divide-y divide-slate-800/70">
                 {liveEntries.length === 0 ? (
                   <div className="p-8 text-center text-xs text-slate-500">
                     No finished runs posted yet. Finish Phase 2 to claim #1 on the board!
@@ -229,9 +276,9 @@ export default function TopSystemHUD() {
                   liveEntries.map((entry, idx) => (
                     <div
                       key={`${entry.name}-${entry.regNo}`}
-                      className="px-5 py-3 flex items-center justify-between text-xs"
+                      className="px-3 sm:px-5 py-3 flex items-center justify-between gap-2 text-xs"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
                         <span
                           className={`w-6 h-6 rounded-full flex items-center justify-center font-extrabold text-[11px] ${
                             idx === 0
@@ -245,20 +292,21 @@ export default function TopSystemHUD() {
                         >
                           {idx + 1}
                         </span>
-                        <div>
-                          <div className="font-bold text-white">{entry.name}</div>
-                          <div className="text-[10px] text-slate-500">{entry.regNo}</div>
+                        <div className="min-w-0">
+                          <div className="font-bold text-white truncate">{entry.name}</div>
+                          <div className="text-[10px] text-slate-500 truncate">{entry.regNo}</div>
+                          <div className="sm:hidden text-[10px] text-cyan-300">⏱ {formatTime(entry.timeSeconds ?? 0)}</div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-5">
-                        <div className="text-right">
+                      <div className="flex items-center gap-3 sm:gap-5 shrink-0">
+                        <div className="hidden sm:block text-right">
                           <div className="text-[9px] text-slate-500">TIME</div>
                           <div className="font-bold text-cyan-300">
                             {formatTime(entry.timeSeconds ?? 0)}
                           </div>
                         </div>
-                        <div className="text-right min-w-[70px]">
+                        <div className="text-right min-w-[60px] sm:min-w-[70px]">
                           <div className="text-[9px] text-slate-500">FINAL SCORE</div>
                           <div className="font-extrabold text-amber-400 text-sm">
                             {entry.score}
@@ -270,11 +318,11 @@ export default function TopSystemHUD() {
                 )}
               </div>
 
-              <div className="bg-slate-950 px-5 py-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+              <div className="bg-slate-950 px-3 sm:px-5 py-3 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-400 shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
                 <span>Rankings factor in Accuracy, CPI &amp; Completion Speed!</span>
                 <button
                   onClick={closeLeaderboardModal}
-                  className="px-4 py-1.5 rounded bg-emerald-500 text-slate-950 font-extrabold text-xs cursor-pointer"
+                  className="px-4 py-2.5 sm:py-1.5 rounded bg-emerald-500 text-slate-950 font-extrabold text-xs cursor-pointer"
                 >
                   BACK TO GAME &rarr;
                 </button>

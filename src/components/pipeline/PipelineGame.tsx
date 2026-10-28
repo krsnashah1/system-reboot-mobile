@@ -498,13 +498,13 @@ export default function PipelineGame() {
   };
 
   return (
-    <section className="relative max-w-6xl mx-auto w-full px-4 py-6 font-mono flex flex-col gap-6">
+    <section className="relative max-w-6xl mx-auto w-full px-3 sm:px-4 py-4 md:py-6 font-mono flex flex-col gap-4 md:gap-6">
       {isPipelineCompleted && (
         <div className="fixed inset-0 z-30 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="max-w-xl w-full p-8 bg-slate-900 border-2 border-amber-400 rounded-2xl text-center shadow-[0_0_60px_rgba(251,191,36,0.35)]"
+            className="max-w-xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto p-5 sm:p-8 bg-slate-900 border-2 border-amber-400 rounded-2xl text-center shadow-[0_0_60px_rgba(251,191,36,0.35)]"
           >
             <div className="inline-block px-3 py-1 rounded bg-amber-500/20 border border-amber-400 text-amber-300 text-xs font-extrabold uppercase mb-3">
               🔒 PHASE 2 LOCKED &amp; COMPLETED
@@ -527,12 +527,12 @@ export default function PipelineGame() {
       )}
 
       <div
-        className={`flex flex-col gap-6 transition-all ${
+        className={`flex flex-col gap-4 md:gap-6 transition-all ${
           isPipelineCompleted ? 'opacity-25 pointer-events-none grayscale' : ''
         }`}
       >
         {/* Top Progress Bar */}
-        <div className="bg-slate-900/90 border border-emerald-500/40 p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-slate-900/90 border border-emerald-500/40 p-3 sm:p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
           <div>
             <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded bg-emerald-500 text-slate-950 uppercase">
               {currentQ.badge}
@@ -562,7 +562,7 @@ export default function PipelineGame() {
 
         {/* QUESTIONS 1–3: DIAGRAM BUILDER (NON-PIPELINED & PIPELINED) */}
         {currentQ.kind === 'DIAGRAM' && diagramValidation && (
-          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-6">
+          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 sm:p-5 space-y-5 sm:space-y-6">
             {/* Explicit Method Banner (Non-Pipelined vs. Pipelined) */}
             <div
               className={`p-3 rounded-xl border-2 text-xs md:text-sm font-extrabold tracking-wide text-center ${
@@ -603,7 +603,7 @@ export default function PipelineGame() {
 
             {/* Interactive 16-Cycle Timing Grid */}
             <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 overflow-x-auto">
-              <div className="flex items-center justify-between mb-3 min-w-[740px]">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 md:min-w-[740px]">
                 <span className="text-xs font-bold text-emerald-400 uppercase">
                   // INTERACTIVE TIMING DIAGRAM ({currentQ.executionMode} METHOD)
                 </span>
@@ -622,9 +622,10 @@ export default function PipelineGame() {
                 </span>
               </div>
 
-              <div className="min-w-[740px] space-y-2">
+              <p className="md:hidden text-[10px] text-slate-500 mb-2">↔ Swipe the diagram sideways to see all 16 cycles. Tap a cell or use ◀ ▶ to shift.</p>
+              <div className="min-w-[640px] md:min-w-[740px] space-y-2">
                 <div className="grid grid-cols-20 gap-1 text-[10px] text-slate-400 font-bold text-center">
-                  <div className="col-span-4 text-left pl-2">INSTRUCTION</div>
+                  <div className="col-span-4 text-left pl-2 sticky left-0 z-10 bg-slate-950">INSTRUCTION</div>
                   {Array.from({ length: 16 }, (_, c) => (
                     <div
                       key={c}
@@ -645,21 +646,21 @@ export default function PipelineGame() {
                   { label: 'I3 (Shiftable)', start: i3Start, setStart: setI3Start },
                 ].map((row) => (
                   <div key={row.label} className="grid grid-cols-20 gap-1 items-center">
-                    <div className="col-span-4 flex items-center justify-between bg-slate-900 px-2.5 py-1.5 rounded border border-slate-800 text-xs">
-                      <span className="font-bold text-white">{row.label}</span>
+                    <div className="col-span-4 sticky left-0 z-10 flex items-center justify-between gap-1 bg-slate-900 px-1.5 sm:px-2.5 py-1.5 rounded border border-slate-800 text-xs">
+                      <span className="font-bold text-white"><span className="md:hidden">{row.label.split(' ')[0]}</span><span className="hidden md:inline">{row.label}</span></span>
                       {row.setStart ? (
                         <div className="flex items-center gap-1">
                           <button
                             type="button"
                             onClick={() => row.setStart!(Math.max(1, row.start - 1))}
-                            className="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 font-extrabold text-[10px] cursor-pointer"
+                            className="px-2.5 py-1.5 md:px-1.5 md:py-0.5 rounded bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 font-extrabold text-[10px] cursor-pointer"
                           >
                             ◀
                           </button>
                           <button
                             type="button"
                             onClick={() => row.setStart!(Math.min(12, row.start + 1))}
-                            className="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 font-extrabold text-[10px] cursor-pointer"
+                            className="px-2.5 py-1.5 md:px-1.5 md:py-0.5 rounded bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 font-extrabold text-[10px] cursor-pointer"
                           >
                             ▶
                           </button>
@@ -709,7 +710,7 @@ export default function PipelineGame() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 pt-2">
               <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
                 <div className="text-xs font-bold text-emerald-400 uppercase mb-1">
                   2A. Select Total Clock Cycles ({currentQ.executionMode} Method)
@@ -779,7 +780,7 @@ export default function PipelineGame() {
 
         {/* QUESTIONS 4–5: HAZARD MCQs */}
         {currentQ.kind === 'MCQ' && (
-          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-5">
+          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 sm:p-5 space-y-4 sm:space-y-5">
             <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 text-xs text-emerald-200">
               <strong>📋 WHAT YOU NEED TO DO:</strong> Inspect the overlapping pipeline diagram below, identify the red{' '}
               <span className="text-rose-400 font-bold">⚠️ HAZARD</span>, and select the correct architectural solution!
@@ -787,9 +788,9 @@ export default function PipelineGame() {
 
             <div className="space-y-2.5 bg-slate-950 p-4 rounded-xl border border-slate-800 overflow-x-auto">
               {currentQ.instructions.map((inst) => (
-                <div key={inst.id} className="flex items-center gap-3 min-w-[460px]">
+                <div key={inst.id} className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 sm:min-w-[460px]">
                   <div
-                    className={`w-48 px-2.5 py-1.5 rounded text-xs font-bold border truncate ${
+                    className={`w-full sm:w-48 shrink-0 px-2.5 py-1.5 rounded text-xs font-bold border truncate ${
                       inst.highlight
                         ? 'bg-amber-500/15 border-amber-400/50 text-amber-200'
                         : 'bg-slate-900 border-slate-800 text-slate-300'
@@ -798,7 +799,7 @@ export default function PipelineGame() {
                     <span className="text-emerald-400 mr-1.5">{inst.id}:</span>
                     {inst.asm}
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     {inst.stages.map((st, sIdx) => (
                       <div
                         key={sIdx}

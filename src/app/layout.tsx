@@ -1,5 +1,5 @@
 // src/app/layout.tsx
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import TopSystemHUD from '@/components/ui/TopSystemHUD';
 import TutorialOverlay from '@/components/ui/TutorialOverlay';
@@ -11,6 +11,13 @@ export const metadata: Metadata = {
   description: 'Interactive Cache Mapping and Instruction Pipeline Simulator',
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#020617',
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -18,15 +25,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="bg-slate-950 text-emerald-400 font-mono min-h-screen overflow-x-hidden selection:bg-emerald-500 selection:text-slate-950">
+      <body className="bg-slate-950 text-emerald-400 font-mono min-h-dvh overflow-x-hidden selection:bg-emerald-500 selection:text-slate-950">
         {/* Global HUD, Walkthrough Modal & Smart Hints */}
         <TopSystemHUD />
         <TutorialOverlay />
         <HintTooltip />
         <GlitchOverlay />
 
-        {/* Main Viewport shifted down by pt-16 for the Top HUD */}
-        <main className="pt-16 min-h-screen flex flex-col">
+        {/* Main Viewport shifted down by the HUD height (taller 2-row HUD on phones) */}
+        <main className="pt-[calc(var(--hud-h)+env(safe-area-inset-top))] min-h-dvh flex flex-col">
           {children}
         </main>
       </body>

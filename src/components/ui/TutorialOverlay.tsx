@@ -155,35 +155,39 @@ export default function TutorialOverlay() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 font-mono"
+        className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 font-mono"
       >
         <motion.div
           initial={{ scale: 0.94, y: 15 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.94, y: 15 }}
-          className="w-full max-w-2xl bg-slate-900 border-2 border-emerald-500/60 rounded-xl shadow-[0_0_50px_rgba(16,185,129,0.25)] overflow-hidden"
+          className="w-full max-w-2xl max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] flex flex-col bg-slate-900 border-2 border-emerald-500/60 rounded-xl shadow-[0_0_50px_rgba(16,185,129,0.25)] overflow-hidden"
         >
           {/* Header */}
-          <div className="bg-slate-950 px-5 py-3 border-b border-emerald-500/30 flex items-center justify-between">
+          <div className="bg-slate-950 px-3 sm:px-5 py-3 border-b border-emerald-500/30 flex items-center justify-between gap-2 shrink-0">
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-xs font-bold tracking-widest text-emerald-400 uppercase">
-                COA FIELD MANUAL &amp; TECHNICIAN LOGIN
+                <span className="hidden sm:inline">COA FIELD MANUAL &amp; TECHNICIAN LOGIN</span>
+                <span className="sm:hidden">COA FIELD MANUAL</span>
               </span>
             </div>
             {hasRegistered && (
               <button
                 onClick={closeTutorial}
-                className="text-xs text-slate-400 hover:text-rose-400 font-bold px-2 py-0.5 rounded cursor-pointer"
+                className="text-xs text-slate-400 hover:text-rose-400 font-bold px-3 py-2 sm:px-2 sm:py-0.5 rounded border border-slate-800 sm:border-transparent cursor-pointer shrink-0"
               >
-                [ESC / RESUME]
+                <span className="hidden sm:inline">[ESC / RESUME]</span>
+                <span className="sm:hidden">[RESUME]</span>
               </button>
             )}
           </div>
 
+          {/* Scrollable body (registration + tabs + content); footer stays pinned below */}
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
           {/* Player Registration Bar (Always visible until registered) */}
           {!hasRegistered && (
-            <div className="bg-emerald-950/30 border-b border-emerald-500/40 px-6 py-4">
+            <div className="bg-emerald-950/30 border-b border-emerald-500/40 px-4 sm:px-6 py-3 sm:py-4">
               <div className="text-xs font-bold text-emerald-300 uppercase mb-2">
                 ⚡ STEP 1: IDENTIFY YOURSELF FOR THE LIVE CLASS LEADERBOARD
               </div>
@@ -198,7 +202,7 @@ export default function TutorialOverlay() {
                       setNameError(false);
                     }}
                     maxLength={16}
-                    className={`w-full bg-slate-950 border rounded-lg px-3.5 py-2 text-xs text-white focus:outline-none ${
+                    className={`w-full bg-slate-950 border rounded-lg px-3.5 py-2.5 sm:py-2 text-xs text-white focus:outline-none ${
                       nameError
                         ? 'border-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.4)]'
                         : 'border-emerald-500/50 focus:border-emerald-400'
@@ -217,7 +221,7 @@ export default function TutorialOverlay() {
                     value={regInput}
                     onChange={(e) => setRegInput(e.target.value)}
                     maxLength={12}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-400"
+                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 sm:py-2 text-xs text-white focus:outline-none focus:border-emerald-400"
                   />
                 </div>
               </div>
@@ -230,7 +234,7 @@ export default function TutorialOverlay() {
               <button
                 key={step.id}
                 onClick={() => setTutorialStep(index)}
-                className={`py-2.5 px-2 text-[10px] md:text-xs font-bold tracking-wider border-b-2 transition-all cursor-pointer ${
+                className={`py-2.5 px-1 sm:px-2 leading-tight text-[10px] md:text-xs font-bold tracking-wider border-b-2 transition-all cursor-pointer ${
                   tutorialStep === index
                     ? 'border-emerald-400 text-emerald-300 bg-emerald-500/10'
                     : 'border-transparent text-slate-500 hover:text-slate-300'
@@ -242,28 +246,31 @@ export default function TutorialOverlay() {
           </div>
 
           {/* Walkthrough Content */}
-          <div className="p-6 min-h-[250px] flex flex-col justify-between">
+          <div className="p-4 sm:p-6 sm:min-h-[250px]">
             <div>
               <h2 className="text-lg font-extrabold text-white">{currentStep.title}</h2>
               <p className="text-xs text-emerald-400/80 mb-3">{currentStep.subtitle}</p>
               {currentStep.content}
             </div>
 
-            {/* Footer Controls */}
-            <div className="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between">
+          </div>
+          </div>
+
+            {/* Footer Controls (pinned; stacks on phones) */}
+            <div className="shrink-0 px-4 sm:px-6 py-3 border-t border-slate-800 bg-slate-950/60 grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-3">
               <button
                 onClick={() => setTutorialStep(Math.max(0, tutorialStep - 1))}
                 disabled={tutorialStep === 0}
-                className="px-4 py-2 rounded text-xs font-bold border border-slate-700 text-slate-300 disabled:opacity-30 cursor-pointer"
+                className="px-4 py-2.5 sm:py-2 rounded text-xs font-bold border border-slate-700 text-slate-300 disabled:opacity-30 cursor-pointer"
               >
                 &larr; PREV TAB
               </button>
 
-              <div className="flex items-center gap-2">
+              <div className="contents sm:flex sm:items-center sm:gap-2">
                 {tutorialStep < WALKTHROUGH_STEPS.length - 1 && (
                   <button
                     onClick={() => setTutorialStep(tutorialStep + 1)}
-                    className="px-4 py-2 rounded text-xs font-bold bg-slate-800 text-emerald-300 hover:bg-slate-700 cursor-pointer"
+                    className="px-4 py-2.5 sm:py-2 rounded text-xs font-bold bg-slate-800 text-emerald-300 hover:bg-slate-700 cursor-pointer"
                   >
                     NEXT TAB &rarr;
                   </button>
@@ -271,13 +278,12 @@ export default function TutorialOverlay() {
 
                 <button
                   onClick={handleStartOrClose}
-                  className="px-5 py-2 rounded text-xs font-extrabold bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.5)] cursor-pointer"
+                  className="col-span-2 sm:col-auto px-5 py-3 sm:py-2 rounded text-xs font-extrabold bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.5)] cursor-pointer"
                 >
                   {hasRegistered ? 'RESUME GAME →' : 'START REBOOT SEQUENCE →'}
                 </button>
               </div>
             </div>
-          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
